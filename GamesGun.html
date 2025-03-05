@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gacha Đánh Nhau</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1e1e1e;
+            color: white;
+            transition: background 0.5s, color 0.5s;
+        }
+        .light-theme {
+            background-color: white;
+            color: black;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .character {
+            display: inline-block;
+            width: 200px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        .character img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid white;
+        }
+        .character-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #e84118;
+        }
+        .health-bar-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .health-wrapper {
+            text-align: center;
+        }
+        .health-bar {
+            width: 200px;
+            height: 20px;
+            background: red;
+            border-radius: 10px;
+            position: relative;
+            transition: width 0.5s ease-out;
+        }
+        .health-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+        .battle-log {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        .result {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 50px;
+            font-weight: bold;
+            color: gold;
+            opacity: 0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+        }
+        .show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 Gacha Đánh Nhau 🔥</h1>
+    <button onclick="toggleTheme()">🌙/☀️</button>
+    <button onclick="goToLeaderboard()">🏆 Bảng Xếp Hạng</button>
+    <div class="container">
+        <button onclick="rollGacha()">🎲 Quay Gacha</button>
+        <button onclick="battle()">⚔️ Đánh Nhau</button>
+    </div>
+    <div class="container">
+        <div class="character">
+            <div class="character-name" id="player-name">Bạn</div>
+            <div id="player"></div>
+        </div>
+        <div class="character">
+            <div class="character-name" id="enemy-name">Địch</div>
+            <div id="enemy"></div>
+        </div>
+    </div>
+    <div class="health-bar-container">
+        <div class="health-wrapper">
+            <div class="health-bar" id="player-health"><span class="health-text" id="player-health-text"></span></div>
+        </div>
+        <div class="health-wrapper">
+            <div class="health-bar" id="enemy-health"><span class="health-text" id="enemy-health-text"></span></div>
+        </div>
+    </div>
+    <div id="log" class="battle-log"></div>
+    <div id="result" class="result"></div>
+
+    <script>
+        let playerHp = 100;
+        let enemyHp = 100;
+
+        function rollGacha() {
+            playerHp = 100;
+            enemyHp = 100;
+            updateHealthBars();
+        }
+
+        function battle() {
+            if (playerHp <= 0 || enemyHp <= 0) return;
+
+            enemyHp -= 20;
+            updateHealthBars();
+            showLog(`⚔️ Bạn tấn công! Địch còn ${enemyHp} HP.`);
+            if (enemyHp <= 0) return showResult("🏆 Bạn thắng!");
+
+            setTimeout(() => {
+                playerHp -= 15;
+                updateHealthBars();
+                showLog(`💥 Địch phản công! Bạn còn ${playerHp} HP.`);
+                if (playerHp <= 0) showResult("💀 Bạn thua!");
+            }, 1000);
+        }
+
+        function updateHealthBars() {
+            document.getElementById("player-health").style.width = `${playerHp}%`;
+            document.getElementById("enemy-health").style.width = `${enemyHp}%`;
+            document.getElementById("player-health-text").innerText = `${playerHp} HP`;
+            document.getElementById("enemy-health-text").innerText = `${enemyHp} HP`;
+        }
+
+        function showLog(message) {
+            const logDiv = document.getElementById("log");
+            logDiv.innerHTML = message;
+            logDiv.style.opacity = "1";
+            setTimeout(() => logDiv.style.opacity = "0", 2000);
+        }
+
+        function showResult(message) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = message;
+            resultDiv.classList.add("show");
+            setTimeout(() => resultDiv.classList.remove("show"), 2000);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("light-theme");
+        }
+
+        function goToLeaderboard() {
+            window.location.href = "leaderboard.html";
+        }
+    </script>
+</body>
+</html>
